@@ -6,6 +6,8 @@
   "license": "ISC",
   "main": "index.js",
   "dependencies": {
+    "@openzeppelin/cli": "^2.7.1",
+    "@openzeppelin/contracts": "^2.5.0",
     "babel-polyfill": "6.26.0",
     "babel-preset-env": "1.7.0",
     "babel-preset-es2015": "6.24.1",
