@@ -32,6 +32,8 @@ class App extends Component {
     const daiTokenMock = new web3.eth.Contract(DaiTokenMock.abi, daiTokenAddress)
     this.setState({ daiTokenMock: daiTokenMock })
     console.log(this.state.daiTokenMock)
+    const balance = await daiTokenMock.methods.balanceOf(this.state.account).call()
+    console.log(balance)
   }
 
   constructor(props) {
