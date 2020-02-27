@@ -33,11 +33,11 @@ class App extends Component {
     const daiTokenAddress = '0xb9a65b2e18b72dBd7F41B232AB4215B99fC3A819' // replace dai address here
     const daiTokenMock = new web3.eth.Contract(DaiTokenMock.abi, daiTokenAddress)
     this.setState({ daiTokenMock: daiTokenMock })
-    // TODO: BALANCE IS NOT WORKING DUE TO PACKAGE // FIX NEEDED
+    console.log(this.state.account, 'this.state.account')
 
-    // console.log('this is daiTokenMock', this.state.daiTokenMock)
-    // const balance = await daiTokenMock.methods.balanceOf(firstAccount).call()
-    // console.log('methods of balance ', balance)
+    console.log('this is daiTokenMock', this.state.daiTokenMock)
+    const balance = await daiTokenMock.methods.balanceOf(this.state.account).call()
+    console.log('methods of balance ', balance)
     // this.setState({ balance: web3.utils.fromWei(balance.toString(), 'Ether')} )
 
     // Create transaction history 
@@ -66,7 +66,7 @@ class App extends Component {
         <div className="container-fluid mt-5">
           <div className="row">
             <main role="main" className="col-lg-12 d-flex text-center">
-              <div className="content mr-auto ml-auto">
+              <div className="content mr-auto ml-auto" style={{ width: "500px" }}>
 
                 <img src={daiLogo} alt="logo of dai coin" />
     
@@ -74,14 +74,28 @@ class App extends Component {
               
                 <form onSubmit={(event) => {
                     // TODO: handle submit
+                    event.preventDefault()
+                    const recipient = this.recipient.value
+                    const amount = this.amount.value
+                    console.log(recipient, amount)
                 }}> 
-                    <div>
+                    <div className="form-group mr-sm-2">
                       <input 
                         id="recipient"
                         type="text"
                         ref={(input) => { this.recipient = input}}
                         className="form-control"
                         placeholder="Recipient Address"
+                        required
+                      />
+                    </div >
+                    <div className="form-group mr-sm-2">
+                      <input 
+                        id="amount"
+                        type="text"
+                        ref={(input) => { this.recipient = input}}
+                        className="form-control"
+                        placeholder="Amount"
                         required
                       />
                     </div>
