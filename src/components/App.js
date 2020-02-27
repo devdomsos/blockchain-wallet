@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import daiLogo from '../dailogo.png';
 import './App.css';
 import Web3 from 'web3';
 import DaiTokenMock from '../abis/DaiTokenMock.json';
@@ -26,14 +27,23 @@ class App extends Component {
   async loadBlockchainData() {
     const web3 = window.web3
     const accounts = await web3.eth.getAccounts()
-    console.log(accounts)
+    console.log('this is the first account form the array', accounts[0])
+    const firstAccount = accounts[0];
     this.setState({ account: accounts[0]})
     const daiTokenAddress = '0xb9a65b2e18b72dBd7F41B232AB4215B99fC3A819' // replace dai address here
     const daiTokenMock = new web3.eth.Contract(DaiTokenMock.abi, daiTokenAddress)
     this.setState({ daiTokenMock: daiTokenMock })
-    console.log(this.state.daiTokenMock)
-    const balance = await daiTokenMock.methods.balanceOf(this.state.account).call()
-    console.log(balance)
+    // TODO: BALANCE IS NOT WORKING DUE TO PACKAGE // FIX NEEDED
+
+    // console.log('this is daiTokenMock', this.state.daiTokenMock)
+    // const balance = await daiTokenMock.methods.balanceOf(firstAccount).call()
+    // console.log('methods of balance ', balance)
+    // this.setState({ balance: web3.utils.fromWei(balance.toString(), 'Ether')} )
+
+    // Create transaction history 
+
+    const transactions = await daiTokenMock.getPastEvents('Transfer', { fromBlock: 0, toBlock: 'latest', filter: { from: this.state.account } })
+    console.log(transactions, 'transactions')
   }
 
   constructor(props) {
@@ -57,11 +67,29 @@ class App extends Component {
           <div className="row">
             <main role="main" className="col-lg-12 d-flex text-center">
               <div className="content mr-auto ml-auto">
-            
-                <h1>Dominik's Starter Kit For Dapps</h1>
-                <p>
-                  Edit <code>src/components/App.js</code> and save to reload.
-                </p>
+
+                <img src={daiLogo} alt="logo of dai coin" />
+    
+                <h1>Balance from this.state.balance goes here - Currently doesnt work</h1>
+              
+                <form onSubmit={(event) => {
+                    // TODO: handle submit
+                }}> 
+                    <div>
+                      <input 
+                        id="recipient"
+                        type="text"
+                        ref={(input) => { this.recipient = input}}
+                        className="form-control"
+                        placeholder="Recipient Address"
+                        required
+                      />
+                    </div>
+
+
+                    <button type="submit" className="btn btn-primary btn-block">Send</button>
+                </form>
+
                
               </div>
             </main>
