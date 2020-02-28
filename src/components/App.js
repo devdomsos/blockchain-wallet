@@ -34,17 +34,25 @@ class App extends Component {
     const daiTokenMock = new web3.eth.Contract(DaiTokenMock.abi, daiTokenAddress)
     this.setState({ daiTokenMock: daiTokenMock })
     console.log(this.state.account, 'this.state.account')
+    console.log('daiTokenMock', daiTokenMock)
 
     console.log('this is daiTokenMock', this.state.daiTokenMock)
     const balance = await daiTokenMock.methods.balanceOf(this.state.account).call()
     console.log('methods of balance ', balance)
     // this.setState({ balance: web3.utils.fromWei(balance.toString(), 'Ether')} )
-
+    // TODO: change balance.toString()
     // Create transaction history 
 
     const transactions = await daiTokenMock.getPastEvents('Transfer', { fromBlock: 0, toBlock: 'latest', filter: { from: this.state.account } })
     console.log(transactions, 'transactions')
+    this.setState({ transactions: transactions} )
   }
+
+  transfer(recipient, amount){
+    this.state.daiTokenMock.methods.transfer(recipient, amount).send( { from: this.state.account})
+  }
+
+   
 
   constructor(props) {
     super(props);
@@ -54,10 +62,11 @@ class App extends Component {
         balance: 0,
         transactions: []
      };
+     this.transfer = this.transfer.bind(this)
   }
 
 
-
+  
   render() {
     return (
       <div>
@@ -76,8 +85,9 @@ class App extends Component {
                     // TODO: handle submit
                     event.preventDefault()
                     const recipient = this.recipient.value
-                    const amount = this.amount.value
+                    const amount = window.web3.toWei(this.amount.value, 'Ether')
                     console.log(recipient, amount)
+                    this.transfer(recipient, amount)
                 }}> 
                     <div className="form-group mr-sm-2">
                       <input 
@@ -99,10 +109,30 @@ class App extends Component {
                         required
                       />
                     </div>
-
-
                     <button type="submit" className="btn btn-primary btn-block">Send</button>
                 </form>
+                <table className="table">
+                  <thread>
+                    <tr>
+                      <th scope="col">
+                        Recipient
+                      </th>
+                      <th scope="col">
+                        Value
+                      </th>
+                    </tr>
+                  </thread>
+                  <tbody>
+                    {this.state.transactions.map( (tx, index) => {
+                      return (
+                      <tr key={index}>
+                        <td>{tx.returnValues.to}</td>
+                      <td>{window.web3.utils.fromWei(tx.returnValues.value.toString(), 'Ether')}</td>
+                      </tr>  
+                      )
+                    })}
+                  </tbody>
+                </table>
 
                
               </div>
