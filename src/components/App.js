@@ -28,19 +28,20 @@ class App extends Component {
     const web3 = window.web3
     const accounts = await web3.eth.getAccounts()
     console.log('this is the first account form the array', accounts[0])
-    const firstAccount = accounts[0];
+    const firstAccount = accounts[3];
     this.setState({ account: accounts[0]})
     const daiTokenAddress = '0xb9a65b2e18b72dBd7F41B232AB4215B99fC3A819' // replace dai address here
     const daiTokenMock = new web3.eth.Contract(DaiTokenMock.abi, daiTokenAddress)
     this.setState({ daiTokenMock: daiTokenMock })
-    console.log(this.state.account, 'this.state.account')
+    console.log('web3', web3)
+    console.log('daiTokenAddress', daiTokenAddress)
+    console.log('DaiTokenMock.abi', DaiTokenMock.abi)
     console.log('daiTokenMock', daiTokenMock)
 
-    console.log('this is daiTokenMock', this.state.daiTokenMock)
-    const balance = await daiTokenMock.methods.balanceOf(this.state.account).call()
-    console.log('methods of balance ', balance)
-    // this.setState({ balance: web3.utils.fromWei(balance.toString(), 'Ether')} )
-    // TODO: change balance.toString()
+    const balance = await daiTokenMock.methods.balanceOf(this.state.account).call();
+    console.log('balance ', balance.toString())
+    this.setState({ balance: web3.utils.fromWei(balance.toString(), 'Ether')} )
+
     // Create transaction history 
 
     const transactions = await daiTokenMock.getPastEvents('Transfer', { fromBlock: 0, toBlock: 'latest', filter: { from: this.state.account } })
@@ -49,8 +50,10 @@ class App extends Component {
   }
 
   transfer(recipient, amount){
+    console.log(amount, 'amout')
     this.state.daiTokenMock.methods.transfer(recipient, amount).send( { from: this.state.account})
   }
+
 
    
 
@@ -79,13 +82,13 @@ class App extends Component {
 
                 <img src={daiLogo} alt="logo of dai coin" />
     
-                <h1>Balance from this.state.balance goes here - Currently doesnt work</h1>
+                <h1>{this.state.balance}</h1>
               
                 <form onSubmit={(event) => {
                     // TODO: handle submit
                     event.preventDefault()
                     const recipient = this.recipient.value
-                    const amount = window.web3.toWei(this.amount.value, 'Ether')
+                    const amount = window.web3.utils.toWei(this.amount.value, 'Ether')
                     console.log(recipient, amount)
                     this.transfer(recipient, amount)
                 }}> 
@@ -123,14 +126,14 @@ class App extends Component {
                     </tr>
                   </thread>
                   <tbody>
-                    {this.state.transactions.map( (tx, index) => {
+                    {/* {this.state.transactions.map( (tx, index) => {
                       return (
                       <tr key={index}>
                         <td>{tx.returnValues.to}</td>
                       <td>{window.web3.utils.fromWei(tx.returnValues.value.toString(), 'Ether')}</td>
                       </tr>  
                       )
-                    })}
+                    })} */}
                   </tbody>
                 </table>
 
